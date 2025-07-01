@@ -1,4 +1,6 @@
 import type {Metadata} from "next";
+import Menu from "@/components/menu/Menu";
+import './globals.css'
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -11,6 +13,8 @@ export default function RootLayout({children,}: Readonly<{
     return (
         <html lang="en">
         <body>
+        <Menu/>
+        <hr/>
         {children}
         </body>
         </html>
