@@ -1,53 +1,42 @@
-import {serverAction} from "@/server/serverActions";
-import Form from "next/form";
+'use client'
+
+import {useForm} from "react-hook-form";
+import {ICar} from "@/models/ICar";
+import {carValidator} from "@/validators/car.validator";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {makeCar} from "@/services/cars.api.services";
 
 const FormComponent = () => {
+    const {register, reset, handleSubmit, formState: {errors}} = useForm<ICar>({
+        mode: "all",
+        resolver: joiResolver(carValidator)
+    });
+    const handler = async (formData: ICar) => {
+        await makeCar(formData)
+        reset();
+    };
+
     return (
         <div>
-            <Form action={serverAction} className={"flex flex-col gap-5"}>
+            <form onSubmit={handleSubmit(handler)} className={"flex flex-col gap-5"}>
                 <label>
-                    <input
-                        type={"text"}
-                        name={"brand"}
-                        required={true}
-                        pattern={"^[a-zA-Zа-яА-ЯёЁіІїЇєЄҐґ]{1,20}$"}
-                        placeholder={"Write brand"}
-                        title={"Brand must be 1–20 Cyrillic or Latin letters only."}
-                        className={"w-120 border border-gray-300 p-2 rounded"}
-                    />
+                    <input type={"text"} {...register("brand")} className={"w-120 border border-gray-300 p-2 rounded"}/>
+                    <div>{errors.brand?.message}</div>
                 </label>
-
                 <label>
-                    <input
-                        type={"number"}
-                        name={"price"}
-                        required={true}
-                        min={0}
-                        max={1000000}
-                        step={1}
-                        placeholder={"Write price"}
-                        title={"Price must be between 0 and 1,000,000"}
-                        className={"w-120 border border-gray-300 p-2 rounded"}
-                    />
+                    <input type={"number"} {...register("price")}
+                           className={"w-120 border border-gray-300 p-2 rounded"}/>
+                    <div>{errors.price?.message}</div>
                 </label>
-
                 <label>
-                    <input
-                        type={"number"}
-                        name={"year"}
-                        required={true}
-                        min={1990}
-                        max={2024}
-                        step={1}
-                        placeholder={"Write year"}
-                        title={"Year must be between 1990 and 2024"}
-                        className={"w-120 border border-gray-300 p-2 rounded"}
-                    />
+                    <input type={"number"} {...register("year")}
+                           className={"w-120 border border-gray-300 p-2 rounded"}/>
+                    <div>{errors.year?.message}</div>
                 </label>
-                <button type={"submit"} className={"px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"}>
+                <button type="submit" className={"px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"}>
                     Save
                 </button>
-            </Form>
+            </form>
         </div>
     );
 };
